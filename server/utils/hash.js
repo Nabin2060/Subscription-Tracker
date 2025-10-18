@@ -1,10 +1,11 @@
 import bcrypt from 'bcryptjs';
-import config from '../config/config';
-
+import config from '../config/config.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const hashPassword = async (password) => {
     try {
-        const salt = config.SALT_ROUNDS;
+        const salt = Number(config.SALT_ROUNDS);
         const hashedPassword = await bcrypt.hash(password, salt);
         return hashedPassword;
     } catch (err) {
