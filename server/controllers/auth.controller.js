@@ -1,11 +1,11 @@
 
 import userModel from "../models/user.model.js";
 import { hashPassword, comparePassword } from "../utils/hash.js";
-import { generateToken, verifyToken } from "../utils/token.js";
+import { generateToken } from "../utils/token.js";
 
 export const signup = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { name, email, password } = req.body;
         // check if user already exists
         const existingUser = await userModel.findOne({ email });
         if (existingUser) {
@@ -19,7 +19,7 @@ export const signup = async (req, res) => {
 
         // create new user
         const newUser = await userModel.create({
-            username,
+            name,
             email,
             password: hashedPassword
         })
@@ -42,3 +42,40 @@ export const signup = async (req, res) => {
     }
 }
 
+export const signin = async (req, res) => {
+    try {
+
+        const { email, password } = req.body;
+        // check if user exists
+        const user = await userModel.findOne({ email: email.toLowerCase() }).select('+password');
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User does not exist. Please signup"
+            })
+        };
+        // compare password
+        const isValiPassword = await comparePassword(password, user.password);
+        if (!isValiPassword) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password"
+            })
+        };
+        // generate token
+        const token = generateToken({ id: user._id, email: user.email });
+        // return response
+        res.status(201).json({
+            success: true,
+            message: "User logged in successfully",
+            data: {
+                user: user,
+                token: token,
+            }
+        })
+
+
+    } catch (err) {
+        res.status(500).json({ message: "Server Error:" + err.message });
+    }
+}
