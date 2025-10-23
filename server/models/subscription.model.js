@@ -15,19 +15,19 @@ const subscriptionSchema = new Schema({
     },
     currency: {
         type: String,
-        enum: ["NEP", "USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SEK", "NZD"],
-        default: "NEP"
+        enum: ["NPR", "USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SEK", "NZD"],
+        default: "NPR"
     },
     frequency: {
         type: String,
         enum: ["daily", "weekly", "monthly", "yearly"],
     },
-    cateogery: {
+    category: {
         type: String,
-        enum: ["sports", "news", "entertaimnent", "technilogy", "finance", "education", "politices", "others"],
+        enum: ["sports", "news", "entertainment", "technology", "finance", "education", "politics", "others"],
         required: true
     },
-    patmentMethod: {
+    paymentMethod: {
         type: String,
         required: true,
         trim: true
@@ -82,6 +82,6 @@ subscriptionSchema.pre("save", function (next) {
 
 });
 
-const subscription = mongoose.Model("subscription", subscriptionSchema);
+const subscription = mongoose.model("subscription", subscriptionSchema);
 
 export default subscription;
